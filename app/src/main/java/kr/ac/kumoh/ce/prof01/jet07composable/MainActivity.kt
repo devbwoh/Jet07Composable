@@ -41,23 +41,36 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
+    var count1 by rememberSaveable { mutableIntStateOf(0) }
+    var count2 by rememberSaveable { mutableIntStateOf(0) }
+
     Jet07ComposableTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
             Column {
-                Counter()
-                Counter()
+                Counter(
+                    Modifier.background(Color(0xFFFE7A36)),
+                    count1) {
+                    count1 = it
+                }
+                Counter(
+                    Modifier.background(Color(0xFF280274)),
+                    count2) {
+                    count2 = it
+                }
             }
         }
     }
 }
 
 @Composable
-fun ColumnScope.Counter() {
-    var count by rememberSaveable { mutableIntStateOf(0) }
-
+fun ColumnScope.Counter(
+    modifier: Modifier = Modifier,
+    count: Int,
+    onChangeCount: (Int) -> Unit,
+) {
     Column(
         modifier = Modifier
             .weight(1F)
@@ -68,10 +81,9 @@ fun ColumnScope.Counter() {
     ) {
         Text(
             text = count.toString(),
-            modifier = Modifier
+            modifier = modifier
                 .padding(8.dp)
-                .fillMaxWidth()
-                .background(Color(0xFFFE7A36)),
+                .fillMaxWidth(),
             color = Color.White,
             fontSize = 100.sp,
             textAlign = TextAlign.Center,
@@ -82,7 +94,7 @@ fun ColumnScope.Counter() {
                 modifier = Modifier
                     .padding(8.dp)
                     .weight(1F),
-                onClick = { count++ }
+                onClick = { onChangeCount(count + 1) }
             ) {
                 Text("증가", fontSize = 30.sp)
             }
@@ -93,7 +105,7 @@ fun ColumnScope.Counter() {
                 modifier = Modifier
                     .padding(8.dp)
                     .weight(1F),
-                onClick = { if (count > 0) count-- }
+                onClick = { if (count > 0) onChangeCount(count - 1) }
             ) {
                 Text("감소", fontSize = 30.sp)
             }
